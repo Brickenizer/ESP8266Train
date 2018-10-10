@@ -81,7 +81,7 @@ void wav_startPlayingFile(const char *wavfilename)
   wavProperties_t wProps;
   int rc;
 
-  Serial.printf("wav_starPlayingFile(%s)\r\n", wavfilename);
+  Serial.printf("wav_startPlayingFile(%s)\r\n", wavfilename);
   i2s_begin();
   rc = wavOpen(wavfilename, &I2S_WAV.wf, &wProps);
   Serial.printf("wavOpen %d\r\n", rc);

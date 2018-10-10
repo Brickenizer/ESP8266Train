@@ -3,6 +3,8 @@
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
+#include "wav_support.h"
+
 
 
 #include "support.h"
@@ -78,8 +80,15 @@ void handleControl(){
     }else{
       Serial.println("motor not set");
     }
-
 }
+
+void handleSound(){
+  server.send(200, "text/plain", "handleSound: playing sounds");
+  wav_startPlayingFile("/T0.wav");
+  wav_startPlayingFile("/T1.wav");
+}
+
+
 void handleNotFound(){
   digitalWrite(LED_PIN, 1);
   String message = "File Not Found\n\n";

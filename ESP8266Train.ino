@@ -69,6 +69,8 @@ void setup(void){
   server.on("/index", handleIndex);
   server.on("/inline", handleInline);
   server.on("/control", handleControl);
+  server.on("/sound",handleSound);
+  
   server.onNotFound(handleNotFound);
    server.begin();
   Serial.println("HTTP server started");

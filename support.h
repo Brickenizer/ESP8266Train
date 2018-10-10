@@ -7,6 +7,7 @@ void updateMotor(String motor_str);
 void handleNotFound();
 void handleControl();
 void handleInline();
+void handleSound();
 void handleRoot();
 
 #endif
