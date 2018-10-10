@@ -86,6 +86,7 @@ void handleSound(){
   server.send(200, "text/plain", "handleSound: playing sounds");
   wav_startPlayingFile("/T0.wav");
   wav_startPlayingFile("/T1.wav");
+  wav_showDir();
 }
 
 

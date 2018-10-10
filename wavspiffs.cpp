@@ -53,6 +53,7 @@ int wavOpen(const char *wavname, wavFILE_t *wf, wavProperties_t *wavProps)
     wf->f = SPIFFS.open(wavname, "r");
     if (!wf->f) {
         retval = -1;
+        Serial.printf("SPIFFS.open fail for %s\n",wavname);
         goto closeExit;
     }
     Serial.println("SPIFFS.open ok");

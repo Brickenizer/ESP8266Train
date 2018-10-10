@@ -48,7 +48,14 @@ void setup(void){
   Serial.begin(115200);
   WiFi.begin(ssid, password);
   Serial.println("");
- 
+
+   if (!SPIFFS.begin()) {
+    Serial.println("SPIFFS.begin() failed");
+    return;
+  }else{
+        Serial.println("SPIFFS.begin() success");
+  }
+
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);

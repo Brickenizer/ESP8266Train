@@ -109,7 +109,7 @@ void wav_showDir(void)
   wavFILE_t wFile;
   wavProperties_t wProps;
   int rc;
-
+  Serial.printf("wav_showDir-START\n");
   Dir dir = SPIFFS.openDir("/");
   while (dir.next()) {
     Serial.println(dir.fileName());
@@ -125,4 +125,5 @@ void wav_showDir(void)
       wavClose(&wFile);
     }
   }
+  Serial.printf("wav_showDir-END\n");
 }
