@@ -93,6 +93,30 @@ Value:<br>
 </tr>
 </table>
 </form>
+<form method="GET" action="/index">
+<select name="sound">
+<option value="T0">T0
+<option value="T1">T1
+<option value="F1">F1
+<option value="F2">F2
+<option value="F3">F3
+<option value="F4">F4
+<option value="F5">F5
+<option value="F6">F6
+<option value="F7">F7
+<option value="F8">F8
+<option value="brakes">Brakes
+<option value="BBCH1">BBCH1
+<option value="BBCH2">BBCH2
+<option value="BBCH3">BBCH3
+<option value="BBCH4">BBCH4
+</select>
+  <input type="submit" value="SUBMIT"><br>
+</form>
+<form method="GET" action="/index">
+<input type=hidden name="sound" id="sound_val" value="brakes">
+  <input type="submit" value="SUBMIT"><br>
+</form>
 
 </div>
 
@@ -107,6 +131,7 @@ motor_slider.oninput = function() {
 
 var lights_slider = document.getElementById("lights");
 var lights_output = document.getElementById("lights_val");
+var sound_output  = document.getElemementById("sound_val");
 lights_output.innerHTML = lights_slider.value;
 lights_slider.oninput = function() {
   lights_output.innerHTML = this.value;
@@ -121,6 +146,10 @@ function motorSet(motor_val) {
     motor_slider.value=motor_val;
     motor_output.innerHTML=motor_val;
 }
+
+function playSounds(sound_name){
+  sounds_output.innerHTML=sound_name;
+}
 </script>
 
 </body>
@@ -130,17 +159,26 @@ function motorSet(motor_val) {
 
 void handleIndex(){
 
-  String tmp_str = server.arg("motor" );
-  updateMotor(tmp_str);
-  tmp_str = server.arg("lights" );
-  updateLights(tmp_str);
-  
-  server.send_P(200, "text/html", INDEX_HTML);
   Serial.print("uri=");
   Serial.println(server.uri());
   Serial.print("method=");
   Serial.println(server.method());
   Serial.print("args=");
   Serial.println(server.args());
+
+  String tmp_str = server.arg("motor" );
+  updateMotor(tmp_str);
+  if(tmp_str.length()>0)
+    Serial.printf("motor = %s\n",tmp_str.c_str());
+  tmp_str = server.arg("lights" );
+  updateLights(tmp_str);
+  if(tmp_str.length()>0)
+    Serial.printf("lights = %s\n",tmp_str.c_str());
+  tmp_str = server.arg("sound" );
+  updateSound(tmp_str);
+  if(tmp_str.length()>0)
+    Serial.printf("sound = %s\n",tmp_str.c_str());
+  
+  server.send_P(200, "text/html", INDEX_HTML);
 
 }

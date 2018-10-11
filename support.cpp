@@ -41,6 +41,23 @@ void updateLights(String lights_str){
     digitalWrite(LED_DIR_PIN, (velocity>0)?1:0);
   }
 }
+void updateSound(String sound_str){
+  if(sound_str.length()){
+    Serial.print("sound= ");
+    Serial.print ( sound_str  ) ;
+    Serial.print(" = ");    
+    Serial.print ( sound_str.toInt()  ) ;
+    Serial.println("");
+    String tmp_sound="/"+sound_str+".wav";
+    if(tmp_sound.length()> 5){
+     wav_startPlayingFile(tmp_sound.c_str());
+    }
+//  wav_startPlayingFile("/T1.wav");
+
+  }
+}
+
+
 
 void handleRoot() {
   digitalWrite(LED_PIN, 1);
