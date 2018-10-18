@@ -12,6 +12,8 @@
 
 const char* ssid     = "NETGEAR41";
 const char* password = "kindflower181";
+//const char* ssid     = "TrainServer";
+//const char* password = "12345678";
  
 ESP8266WebServer server(80);
 WebSocketsServer webSocket = WebSocketsServer(81);
@@ -88,7 +90,7 @@ void setup(void){
  
 void loop(void){
   server.handleClient();
-  wav_loop();
+  wav_loopUpdate();
 }
 
 /*******/
@@ -103,7 +105,7 @@ void startPlaying(const char *filename)
 }
 
 void update_browser() {
-  if (!wav_playing()) {
+  if (!wav_isPlaying()) {
     webSocket.broadcastTXT("nowPlaying=");
   }
 }

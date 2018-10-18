@@ -30,7 +30,7 @@ void wav_stopPlaying()
   wavClose(&I2S_WAV.wf);
 }
 
-bool wav_playing()
+bool wav_isPlaying()
 {
   return I2S_WAV.playing;
 }
@@ -43,7 +43,7 @@ void wav_setup()
   I2S_WAV.playing = false;
 }
 
-void wav_loop()
+void wav_loopUpdate()
 {
   bool i2s_full = false;
   int rc;
@@ -101,7 +101,7 @@ void wav_startPlayingFile(const char *wavfilename)
   I2S_WAV.bufferlen = -1;
   I2S_WAV.buffer_index = 0;
   I2S_WAV.playing = true;
-  wav_loop();
+  wav_loopUpdate();
 }
 
 void wav_showDir(void)
