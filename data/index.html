@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      .slidecontainer {
+      width: 100%;
+      }
+
+      .slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 25px;
+      background: #d3d3d3;
+      outline: none;
+      opacity: 0.7;
+      -webkit-transition: .2s;
+      transition: opacity .2s;
+      }
+      input[type=range][orient=vertical]
+      {
+      writing-mode: bt-lr; /* IE */
+      -webkit-appearance: slider-vertical; /* WebKit */
+      width: 8px;
+      height: 175px;
+      padding: 0 5px;
+      }
+
+
+body {font-family: Arial;}
+
+/* Style the tab */
+.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+    background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+    background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+      
+    </style>
+    <title> Train Control</title>
+  </head>
+  <body  onload="GetStatus('','')" >
+    <script>
+
+      function myStatus(arr) {
+      var i;
+      for(i = 0; i < arr.length; i++)
+      {
+      
+      document.getElementById("motor_slider").value = Math.round(arr[i].motor_pct);
+      document.getElementById('motor_val').innerHTML= Math.round(arr[i].motor_pct);
+      
+      document.getElementById("lights_slider").value = Math.round(arr[i].lights_pct);
+      document.getElementById('lights_val').innerHTML= Math.round(arr[i].lights_pct);
+      
+      document.getElementById("volume_slider").value = Math.round(arr[i].volume_pct);
+      document.getElementById('volume_val').innerHTML= Math.round(arr[i].volume_pct);
+      
+      }
+      
+      };
+
+
+
+
+
+      function GetStatus(url_base, url_params) {
+      var xmlhttp = new XMLHttpRequest();
+      var url = "update";
+      if(url_base!==null && url_base.length > 0){
+        url = url_base;
+      }
+      if(url_params!==null && url_params.length > 0){
+         url += "?" + url_params;
+      }
+      
+      document.getElementById('place_url').innerHTML=url;
+      
+      xmlhttp.onreadystatechange = function() {
+	if (this.readyState == 4 && this.status == 200) {
+	var tmp_text = "<pre>"+this.response+"</pre>";
+      document.getElementById('place_response').innerHTML=tmp_text;
+      if(this.responseText){
+      var myArr = JSON.parse(this.responseText);
+      myStatus(myArr);
+      }
+      };
+      };
+      xmlhttp.open("GET", url, true);
+      xmlhttp.send();
+      };
+
+      function submitSliders(file_name){
+      var url = "update";
+      if(file_name!==null){
+      url = file_name;
+      }
+      
+      var motor_val=document.getElementById('motor_slider').value;
+      document.getElementById('motor_val').innerHTML=motor_val;
+      document.getElementById('motor_req').innerHTML=motor_val;
+      
+      var lights_val=document.getElementById('lights_slider').value;
+      document.getElementById('lights_val').innerHTML=lights_val;
+      document.getElementById('lights_req').innerHTML=lights_val;
+      
+      var volume_val=document.getElementById('volume_slider').value;
+      document.getElementById('volume_val').innerHTML=volume_val;
+      document.getElementById('volume_req').innerHTML=volume_val;
+
+      var url_params='';
+      url_params+="motor_pct="+motor_val;
+      url_params+="&lights_pct="+lights_val;
+      url_params+="&volume_pct="+volume_val;
+      GetStatus(url,url_params);
+      };
+      
+      function changeSliders(){
+      
+      var motor_val=document.getElementById('motor_slider').value;
+      document.getElementById('motor_req').innerHTML=motor_val;
+      
+      var lights_val=document.getElementById('lights_slider').value;
+      document.getElementById('lights_req').innerHTML=lights_val;
+      
+      var volume_val=document.getElementById('volume_slider').value;
+      document.getElementById('volume_req').innerHTML=volume_val;
+
+      };
+      
+
+
+
+
+      function submitMotorButton(motor_val){
+      var url = "update";
+      var url_params="motor_pct="+motor_val;
+      
+      document.getElementById('motor_val').innerHTML=motor_val;
+      document.getElementById('motor_req').innerHTML=motor_val;
+      GetStatus(url,url_params);
+
+      };
+      
+      function submitLightsButton(lights_val){
+      var url = "update";
+      var url_params ="lights_pct="+lights_val;
+      
+      document.getElementById('lights_val').innerHTML=lights_val;
+      document.getElementById('lights_req').innerHTML=lights_val;
+      GetStatus(url,url_params);
+      
+      }
+
+      function submitVolumeButton(volume_val){
+      var url = "update";
+      var url_params="volume_pct="+volume_val;
+      
+      document.getElementById('volume_val').innerHTML=volume_val;
+      document.getElementById('volume_req').innerHTML=volume_val;
+      
+      GetStatus(url,url_params);
+	}
+
+	function soundPlay(sound_name){
+	var url = "update";
+	var url_params="sound_name="+sound_name;
+      
+	GetStatus(url,url_params);
+	}
+function openCity(evt, cityName) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(cityName).style.display = "block";
+    evt.currentTarget.className += " active";
+}
+function showDebug() {
+    var x = document.getElementById("DEBUG_DATA");
+    if (x.style.display === "none") {
+        x.style.display = "block";
+    } else {
+        x.style.display = "none";
+    }
+}
+
+    </script>
+<h2>Tabs</h2>
+<p>Click on the buttons inside the tabbed menu:</p>
+
+<div class="tab">
+  <button class="tablinks" onclick="openCity(event, 'Motor')"><img src=motor.svg alt="Motor" height=15>Motor</button>
+  <button class="tablinks" onclick="openCity(event, 'Lights')"><img src=bulb.svg alt="Lights" height=15>Lights</button>
+  <button class="tablinks" onclick="openCity(event, 'Sound')"><img src=spkr.svg alt="Sound" height=15>Sound</button>
+  <button class="tablinks" onclick="openCity(event, 'DEBUG')">Debug</button>
+</div>
+
+	  <div id="Motor" class="tabcontent">
+  <h3>Motor</h3>
+  <p>Motor output settings</p>
+
+
+	  <table border=1>
+	    <tr>
+	      <td colspan=2 align=center><img src=motor.svg alt="Motor" height=15>Motor</td>
+	    </tr>
+	    <tr>
+	      <td>Value:</td><td> <span id="motor_val"></span></td>
+	    </tr>
+	    <tr>
+	      <td>Request:</td><td> <span id="motor_req"></span></td>
+	    </tr>
+	    <tr>
+	      <td>
+    		<input  type="range" orient="vertical" name="motor"
+			value="0" min=-100 max=100 step=5 id="motor_slider"
+			onchange="submitSliders('update')"
+			oninput="changeSliders()"
+			list="tickmarks"><br>
+	      </td>
+	      <td>
+		<button onclick="submitMotorButton(100)">100%</button><br>
+		<button onclick="submitMotorButton(75)">75%</button><br>
+		<button onclick="submitMotorButton(50)">50%</button><br>
+		<button onclick="submitMotorButton(25)">25%</button><br>
+		<button onclick="submitMotorButton(0)">0%</button><br>
+		<button onclick="submitMotorButton(-25)">-25%</button><br>
+		<button onclick="submitMotorButton(-50)">-50%</button><br>
+		<button onclick="submitMotorButton(-75)">-75%</button><br>
+		<button onclick="submitMotorButton(-100)">-100%</button><br>
+	      </td>
+	    </tr>
+	  </table>
+</div>
+
+
+	  <div id="Lights" class="tabcontent">
+  <h3>Lights</h3>
+  <p>Lights output settings</p>
+
+	  
+	  <table border=1>
+      <tr>
+	<td colspan=2 align=center><img src="bulb.svg" alt="Lights" height=15>Lights</td>
+      </tr>
+      <tr>
+	<td>Value:</td><td> <span id="lights_val"></span></td>
+      </tr>
+      <tr>
+	<td>Request:</td><td> <span id="lights_req"></span></td>
+      </tr>
+      <tr>
+	<td>
+    	  <input  type="range" orient="vertical" name="lights"
+		  value="0" min=-100 max=100 step=5 id="lights_slider"
+			oninput="changeSliders()"
+		  onchange="submitSliders('update')"  list="tickmarks"><br>
+	</td>
+	<td>
+	  <button onclick="submitLightsButton(100)">100%</button><br>
+	  <button onclick="submitLightsButton(75)">75%</button><br>
+	  <button onclick="submitLightsButton(50)">50%</button><br>
+	  <button onclick="submitLightsButton(25)">25%</button><br>
+	  <button onclick="submitLightsButton(0)">0%</button><br>
+	  <button onclick="submitLightsButton(-25)">-25%</button><br>
+	  <button onclick="submitLightsButton(-50)">-50%</button><br>
+	  <button onclick="submitLightsButton(-75)">-75%</button><br>
+	  <button onclick="submitLightsButton(-100)">-100%</button><br>
+	</td>
+      </tr>
+      </table>
+</div>
+
+
+	  <div id="Sound" class="tabcontent">
+  <h3>Sound</h3>
+  <p>Sound output settings</p>
+	</td>
+
+	<td valign=top>
+    <table border=1>
+      <tr>
+	<td colspan=2 align=center><img src="spkr.svg" alt="Volume" height=15>Volume</td>
+      </tr>
+      <tr>
+	<td>Value:</td><td> <span id="volume_val"></span></td>
+      </tr>
+      <tr>
+	<td>Request:</td><td> <span id="volume_req"></span></td>
+      </tr>
+      <tr>
+	<td>
+    	  <input  type="range" orient="vertical" name="volume"
+		  value="0" min=0 max=100 step=1 id="volume_slider"
+			oninput="changeSliders()"
+		  onchange="submitSliders('update')" list="tickmarks">
+	  <datalist id="tickmarks">
+  <option value="-100" label="-100%">
+  <option value="-90">
+  <option value="-80">
+  <option value="-70">
+  <option value="-60">
+  <option value="-50" label="-50%">
+  <option value="-40">
+  <option value="-30">
+  <option value="-20">
+  <option value="-10">
+  <option value="0" label="0%">
+  <option value="10">
+  <option value="20">
+  <option value="30">
+  <option value="40">
+  <option value="50" label="50%">
+  <option value="60">
+  <option value="70">
+  <option value="80">
+  <option value="90">
+  <option value="100" label="100%">
+	  </datalist>
+	  <br>
+	</td>
+	<td>
+	  <button onclick="submitVolumeButton(100)">100%</button><br>
+	  <button onclick="submitVolumeButton(75)">75%</button><br>
+	  <button onclick="submitVolumeButton(50)">50%</button><br>
+	  <button onclick="submitVolumeButton(25)">25%</button><br>
+	  <button onclick="submitVolumeButton(4)">4%</button><br>
+	  <button onclick="submitVolumeButton(3)">3%</button><br>
+	  <button onclick="submitVolumeButton(2)">2%</button><br>
+	  <button onclick="submitVolumeButton(1)">1%</button><br>
+	  <button onclick="submitVolumeButton(0)">0%</button><br>
+	</td>
+      </tr>
+      </table>
+</div>
+
+
+	  <div id="DEBUG" class="tabcontent">
+  <h3>Debug</h3>
+  <p>Debug output settings</p>
+
+
+	  	      <table border=1>
+		<tr>
+		  <td><button onclick="soundPlay('Class 4 med with reverb 1')">reverb</button></td>
+		  <td><button onclick="soundPlay('brakes')">brakes</button></td>
+		  <td><button onclick="soundPlay('whistle')">whistle</button></td>
+		</tr>
+
+		<tr>
+		  <td><button onclick="soundPlay('99_H1_1')">99_H1_1</button></td>
+		  <td><button onclick="soundPlay('Class 4 1_1')">Class 4 1_1</button></td>
+		  <td><button onclick="soundPlay('ch1')">ch1</button></td>
+		</tr>
+
+		<tr>
+		  <td><button onclick="soundPlay('99_H1_2')">99_H1_2</button></td>
+		  <td><button onclick="soundPlay('Class 4 1_2')">Class 4 1_2</button></td>
+		  <td><button onclick="soundPlay('ch2')">ch2</button></td>
+		</tr>
+
+		<tr>
+		  <td><button onclick="soundPlay('99_H1_3')">99_H1_3</button></td>
+		  <td><button onclick="soundPlay('Class 4 1_3')">Class 4 1_3</button></td>
+		  <td><button onclick="soundPlay('ch3')">ch3</button></td>
+		</tr>
+
+		<tr>
+		  <td><button onclick="soundPlay('99_H1_4')">99_H1_4</button></td>
+		  <td><button onclick="soundPlay('Class 4 1_4')">Class 4 1_4</button></td>
+		  <td><button onclick="soundPlay('ch4')">ch4</button></td>
+		</tr>
+
+	      </table>
+	  </div>
+	 <p> <button onclick="showDebug()">Debug Output</button></p>
+	  <div id=DEBUG_DATA>
+    <table border=10>
+      <tr><td >url</td><td ><font id=place_url></font></td></tr>
+      <tr><td >response</td><td ><font id=place_response></font></td></tr>
+    </table>
+    </div>
+  </body>
+</html>
