@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include "index.h"
-#include "pin_defines.h"
+//#include "pin_defines.h"
 #include "support.h"
 #include <ESP8266WebServer.h>
 
@@ -42,8 +42,7 @@ input[type=range][orient=vertical]
 </style>
 </head>
 <body>
-<H1>LEGOTRAIN2</H1>
-<h1>Train Controls</h1>
+<H1>LEGOTRAIN2 Train Controls INLINE</h1>
 <p>Drag the slider to control the train.</p>
 
 <div class="controlcontainer">
@@ -51,14 +50,19 @@ input[type=range][orient=vertical]
   <tr>
   <td colspan=2>Motor</td>
   <td colspan=2>Lights</td>
+  <td colspan=2>Sound</td>
   </tr>
+  <tr>
+
 <form method="GET" action="/index">
-  <tr><td>
+<!--Motor-->  
+  <td>
    <input  type="range" orient="vertical" name="motor"  value="0" min=-1023 max=1023 id="motor"><br>
   Value:<br>
   <span id="motor_val"></span><br>
   <input type="submit" value="Submit"><br>
-</td><td align=center valign=top>
+</td>
+<td align=center valign=top>
   <button onclick="motorSet(1024)">100%</button><br>
   <button onclick="motorSet(768)">75%</button><br>
   <button onclick="motorSet(512)">50%</button><br>
@@ -71,45 +75,108 @@ input[type=range][orient=vertical]
   <br>
 </td>
 </form>
-<form method="GET" action="/index">
 
+<!--Lights-->
+<form method="GET" action="/index">
 <td>
 <input type="range" orient="vertical" name="lights" value="0" min=-1023 max=1023 id="lights"><br>
 Value:<br>
 <span id="lights_val"></span><br>
   <input type="submit" value="Submit">
-</td><td align=center valign=top>
-  <button onclick="lightsSet(1023)">100%</button><br>
-  <button onclick="lightsSet(768)">75%</button><br>
-  <button onclick="lightsSet(512)">50%</button><br>
-  <button onclick="lightsSet(256)">25%</button><br>
+</td>
+<td align=center valign=top>
+  <button onclick="lightsSet(100)">100%</button><br>
+  <button onclick="lightsSet(75)">75%</button><br>
+  <button onclick="lightsSet(50)">50%</button><br>
+  <button onclick="lightsSet(25)">25%</button><br>
   <button onclick="lightsSet(0)">OFF</button><br>
-  <button onclick="lightsSet(-256)">-25%</button><br>
-  <button onclick="lightsSet(-512)">-50%</button><br>
-  <button onclick="lightsSet(-768)">-75%</button><br>
-  <button onclick="lightsSet(-1023)">-100%</button><br>
+  <button onclick="lightsSet(-25)">-25%</button><br>
+  <button onclick="lightsSet(-50)">-50%</button><br>
+  <button onclick="lightsSet(-75)">-75%</button><br>
+  <button onclick="lightsSet(-100)">-100%</button><br>
+  <br>
+</td>
+</form>
+
+<!--Sound-->
+<form method="GET" action="/index">
+<td>
+<input type="range" onchange="soundVolume(-1)" orient="vertical" name="volume" value="0" min=0 max=100 id="volume"><br>
+Value:<br>
+<span id="volume_val"></span><br>
+  <input type="submit" value="Submit">
+</td>
+<td align=center valign=top>
+
+<table border=1>
+<tr>
+  <td><button onclick="soundPlay(Class 4 med with reverb 1)">reverb</button></td>
+  <td><button onclick="soundPlay(brakes)">brakes</button></td>
+  <td><button onclick="soundPlay(whistle)">whistle</button></td>
+</tr>
+
+<tr>
+<td><button onclick="soundPlay(99_H1_1)">99_H1_1</button></td>
+<td><button onclick="soundPlay(Class 4 1_1)">Class 4 1_1</button></td>
+<td><button onclick="soundPlay(ch1)">ch1</button></td>
+</tr>
+
+<tr>
+<td><button onclick="soundPlay(99_H1_1)">99_H1_1</button></td>
+<td><button onclick="soundPlay(Class 4 1_1)">Class 4 1_1</button></td>
+<td><button onclick="soundPlay(ch1)">ch1</button></td>
+</tr>
+
+<tr>
+<td><button onclick="soundPlay(99_H1_2)">99_H1_2</button></td>
+<td><button onclick="soundPlay(Class 4 1_2)">Class 4 1_2</button></td>
+<td><button onclick="soundPlay(ch2)">ch2</button></td>
+</tr>
+
+<tr>
+<td><button onclick="soundPlay(99_H1_3)">99_H1_3</button></td>
+<td><button onclick="soundPlay(Class 4 1_3)">Class 4 1_3</button></td>
+<td><button onclick="soundPlay(ch3)">ch3</button></td>
+</tr>
+
+<tr>
+<td><button onclick="soundPlay(99_H1_4)">99_H1_4</button></td>
+<td><button onclick="soundPlay(Class 4 1_4)">Class 4 1_4</button></td>
+<td><button onclick="soundPlay(ch4)">ch4</button></td>
+</tr>
+
+</table>
+  
+  <button onclick="soundVolume(100)">100%</button><br>
+  <button onclick="soundVolume(75)">75%</button><br>
+  <button onclick="soundVolume(50)">50%</button><br>
+  <button onclick="soundVolume(25)">25%</button><br>
+  <button onclick="soundVolume(0)">0%</button><br>
   <br>
 </td>
 </tr>
 </table>
 </form>
+
 <form method="GET" action="/index">
-<select name="sound">
-<option value="T0">T0
-<option value="T1">T1
-<option value="F1">F1
-<option value="F2">F2
-<option value="F3">F3
-<option value="F4">F4
-<option value="F5">F5
-<option value="F6">F6
-<option value="F7">F7
-<option value="F8">F8
-<option value="brakes">Brakes
-<option value="BBCH1">BBCH1
-<option value="BBCH2">BBCH2
-<option value="BBCH3">BBCH3
-<option value="BBCH4">BBCH4
+<select name="sound" size=10>
+<option value="99_H1_1">H1_1
+<option value="99_H1_2">H1_2
+<option value="99_H1_3">H1_3
+<option value="99_H1_4">H1_4
+<option value="Class 4 1_1">Class 4 1_1
+<option value="Class 4 1_2">Class 4 1_2
+<option value="Class 4 1_3">Class 4 1_3
+<option value="Class 4 1_4">Class 4 1_4
+<option value="Class 4 med with reverb 1">reverb
+<option value="brakes">brakes
+<option value="ch1">ch1
+<option value="ch2">ch2
+<option value="ch3">ch3
+<option value="ch4">ch4
+<option value="initiated">initiated
+<option value="pfeiferl">pfeifer
+<option value="whistle">whistle
 </select>
   <input type="submit" value="SUBMIT"><br>
 </form>
@@ -118,6 +185,7 @@ Value:<br>
   <input type="submit" value="SUBMIT"><br>
 </form>
 
+<A href="/index?sound=whistle">whistle</a>
 </div>
 
 <script>
@@ -131,7 +199,6 @@ motor_slider.oninput = function() {
 
 var lights_slider = document.getElementById("lights");
 var lights_output = document.getElementById("lights_val");
-var sound_output  = document.getElemementById("sound_val");
 lights_output.innerHTML = lights_slider.value;
 lights_slider.oninput = function() {
   lights_output.innerHTML = this.value;
@@ -147,7 +214,18 @@ function motorSet(motor_val) {
     motor_output.innerHTML=motor_val;
 }
 
-function playSounds(sound_name){
+function soundVolume(sound_vol){
+  var sound_volume  = document.getElemementById("sound_volume");
+  if(sound_vol < 0){
+    
+  }else{
+    
+  }
+  sounds_volume.innerHTML=sound_vol;
+}
+
+function soundPlay(sound_name){
+  var sound_output  = document.getElemementById("sound_val");
   sounds_output.innerHTML=sound_name;
 }
 </script>
@@ -158,27 +236,15 @@ function playSounds(sound_name){
 
 
 void handleIndex(){
-
-  Serial.print("uri=");
-  Serial.println(server.uri());
-  Serial.print("method=");
-  Serial.println(server.method());
-  Serial.print("args=");
-  Serial.println(server.args());
-
-  String tmp_str = server.arg("motor" );
-  updateMotor(tmp_str);
-  if(tmp_str.length()>0)
-    Serial.printf("motor = %s\n",tmp_str.c_str());
-  tmp_str = server.arg("lights" );
-  updateLights(tmp_str);
-  if(tmp_str.length()>0)
-    Serial.printf("lights = %s\n",tmp_str.c_str());
-  tmp_str = server.arg("sound" );
-  updateSound(tmp_str);
-  if(tmp_str.length()>0)
-    Serial.printf("sound = %s\n",tmp_str.c_str());
+  Serial.printf("handleIndex CALLED\n");
+  handleUpdate();
   
   server.send_P(200, "text/html", INDEX_HTML);
+}
 
+void handleIndex2(){
+  Serial.printf("handleIndex2 CALLED\n");
+  if (!handleFileRead("index.html")){
+    handleNotFound();
+  }
 }
