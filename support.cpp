@@ -16,7 +16,8 @@ extern Chug *chug;
 extern float motor_pct;
 extern float lights_pct;
 extern float volume_pct;
-
+void writeToMotorPct(float velocity_pct);
+void writeToLightsPct(float lights_pct);
 void setupMotorShield(){
   // 4 pins control the motor shield.
   // Pins 4 and 5 control the speed of the motors with PWM in a default range of 0..1023
@@ -28,38 +29,49 @@ void setupMotorShield(){
   pinMode(LED_PIN, OUTPUT);
   pinMode(LED_DIR_PIN, OUTPUT);
 
-  updateMotor(String(0));
-  updateLights(String(0));
+  writeToMotorPct(0);
+  writeToLightsPct(0);
 
 }
+void writeToMotorPct(float velocity_pct){
+    if(velocity_pct > 100) 
+      velocity_pct=100;
+    else if(velocity_pct < -100)
+      velocity_pct=-100;
 
-void updateMotor(String motor_str){
-  if(motor_str.length()){
-    Serial.printf("motor= %s\n",motor_str.c_str());
-
-    float velocity=motor_str.toFloat();
-    if(velocity > 100) 
-      velocity=100;
-    else if(velocity < -100)
-      velocity=-100;
-
-    float speed = (velocity>0)?velocity:-velocity;
+    float speed = (velocity_pct>0)?velocity_pct:-velocity_pct;
     chug->SetSpeed((26*speed)/100.0);
     Serial.printf("SpeedMPH = %f \n", chug->GetSpeedMPH());
 
-    motor_pct = velocity;
+    motor_pct = velocity_pct;
     int write_val=(speed * 1023.0)/100.0;
     analogWrite(MOTOR_PIN, write_val);
     digitalWrite(MOTOR_DIR_PIN, (motor_pct>0)?LOW:HIGH);
     Serial.printf("motor_pct = %f\n",motor_pct);
+}
+void updateMotorPct(String motor_str){
+  if(motor_str.length()){
+    Serial.printf("motor= %s\n",motor_str.c_str());
+
+    float velocity_pct=motor_str.toFloat();
+    writeToMotorPct(velocity_pct);
   }
 }
+void updateMotor(String motor_str, float range_max){
+  if((-0.001 < range_max) && (range_max < 0.001)){
+    return;
+  }
+  if(motor_str.length()){
+    Serial.printf("motor= %s\n",motor_str.c_str());
 
-void updateLights(String lights_str){
-  if(lights_str.length()){
-    Serial.printf("lights= %s\n",lights_str.c_str());
+    float velocity_pct=motor_str.toFloat();
+    velocity_pct = velocity_pct*100.0/range_max;
+    writeToMotorPct(velocity_pct);
+  }  
+}
+void writeToLightsPct(float lights_pct){
     
-    float velocity=lights_str.toFloat();
+    float velocity=lights_pct;
     if(velocity > 100) 
       velocity=100;
     else if(velocity < -100)
@@ -71,7 +83,26 @@ void updateLights(String lights_str){
     int write_val=(speed * 1023.0)/100.0;
     analogWrite(LED_PIN, write_val);
     digitalWrite(LED_DIR_PIN, (lights_pct>0)?LOW:HIGH);
+}
+void updateLightsPct(String lights_str){
+  if(lights_str.length()){
+    Serial.printf("lights= %s\n",lights_str.c_str());
+
+    float velocity_pct=lights_str.toFloat();
+    writeToLightsPct(velocity_pct);
   }
+}
+void updateLights(String lights_str, float range_max){
+  if((-0.001 < range_max) && (range_max < 0.001)){
+    return;
+  }
+  if(lights_str.length()){
+    Serial.printf("lights= %s\n",lights_str.c_str());
+
+    float lights_pct=lights_str.toFloat();
+    lights_pct = lights_pct*100.0/range_max;
+    writeToLightsPct(lights_pct);
+  }  
 }
 
 void updateSound(String sound_str){
@@ -201,7 +232,7 @@ void handleUpdate(){
     tmp_str = server.arg("motor_pct");
   }
   if(tmp_str.length()>0){
-    updateMotor(tmp_str);
+    updateMotorPct(tmp_str);
     Serial.printf("motor = %s\n",tmp_str.c_str());
   }
 
@@ -211,7 +242,7 @@ void handleUpdate(){
     tmp_str = server.arg("lights_pct");
   }
   if(tmp_str.length()>0){
-    updateLights(tmp_str);
+    updateLightsPct(tmp_str);
     Serial.printf("lights = %s\n",tmp_str.c_str());
   }
   //SOUND
@@ -234,6 +265,23 @@ void handleUpdate(){
     Serial.printf("volume = %s\n",tmp_str.c_str());
   }
 
+
+  //Simple REST catch for Internet of LEGO NODE RED protocol
+  if(server.uri() == "/motor"){
+    // get the params
+    String tmp_str = server.arg("params" );
+    if(tmp_str.length() > 0){
+      updateMotor(tmp_str, 1024.0);
+    }
+  }
+  
+  if(server.uri() == "/lights"){
+    // get the params
+    String tmp_str = server.arg("params" );
+    if(tmp_str.length() > 0){
+      updateLights(tmp_str, 1024.0);
+    }
+  }
   
   Serial.printf("handleUpdate-end\n");
 }
@@ -246,7 +294,14 @@ void handleUpdateJSON(){
   ret_string += "\"motor_pct\": \""  + String(motor_pct)  + "\",\n";
   ret_string += "\"lights_pct\": \"" + String(lights_pct) + "\",\n";
   ret_string += "\"volume_pct\": \"" + String(volume_pct) + "\",\n";
-  ret_string += "\"train_name\": \"" + String("Steam Engine") + "\"\n";
+//compatibility with Internet of LEGO Node red - begin
+  ret_string += "\"return\": \"" + String("1") + "\"\n";
+  ret_string += "\"id\": \"" + String("1") + "\"\n";
+  ret_string += "\"name\": \"" + String("Steam Engine") + "\"\n";
+  ret_string += "\"hardware\": \"" + String("esp8266") + "\"\n";
+  ret_string += "\"connected\": " + String("true") + "\n";
+//{"return_value": 1, "id": "1", "name": "Horizon Express", "hardware": "esp8266", "connected": true}
+//compatibility with Internet of LEGO Node red - end
   ret_string += "}]\n";
   server.send(200, "application/json", ret_string);
   Serial.printf("after set\n");

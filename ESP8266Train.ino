@@ -72,6 +72,8 @@ void setup()
   server.on("/index", handleIndex2);
   server.on("/index.html", handleIndex2);
   server.on("/update",handleUpdateJSON);
+  server.on("/motor",handleUpdateJSON);
+  server.on("/lights",handleUpdateJSON);
   server.onNotFound(handleNotFound);
   server.begin();
   Serial.println("HTTP server started");
