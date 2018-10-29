@@ -25,8 +25,11 @@ Chug *chug;
 uint32_t lastWhistle;
 
 float motor_pct;
+bool  motor_state;
 float lights_pct;
+bool  lights_state;
 float volume_pct;
+bool  volume_state;
 
 uint32_t brake_time=millis()+3000;
 
@@ -35,7 +38,6 @@ const char* password = "kindflower181";
 
 ESP8266WebServer server(80);
 WebSocketsServer webSocket = WebSocketsServer(81);
-
 
 void setup()
 {
@@ -77,10 +79,13 @@ void setup()
   server.onNotFound(handleNotFound);
   server.begin();
   Serial.println("HTTP server started");
-
+  
   motor_pct=0;
-  lights_pct=0;
+  motor_state=false;
+  lights_pct=100;
+  lights_state=false;
   volume_pct=0;
+  volume_state=false;
 }
 
 void loop()

@@ -1,11 +1,5 @@
-//#include <Arduino.h>
-//#include <ESP8266WiFi.h>
-//#include <WiFiClient.h>
 #include <ESP8266WebServer.h>
-//#include <ESP8266mDNS.h>
-//#include "wav_support.h"
 #include "chug.h"
-
 
 #include "support.h"
 #include "pin_defines.h"
@@ -14,10 +8,15 @@ extern ESP8266WebServer server;
 extern Chug *chug;
 
 extern float motor_pct;
+extern bool  motor_state;
 extern float lights_pct;
+extern bool  lights_state;
 extern float volume_pct;
-void writeToMotorPct(float velocity_pct);
-void writeToLightsPct(float lights_pct);
+extern bool  volume_state;
+
+void writeToMotorPct(float velocity_pct_in);
+void writeToLightsPct(float lights_pct_in, bool lights_state_in);
+
 void setupMotorShield(){
   // 4 pins control the motor shield.
   // Pins 4 and 5 control the speed of the motors with PWM in a default range of 0..1023
@@ -30,7 +29,8 @@ void setupMotorShield(){
   pinMode(LED_DIR_PIN, OUTPUT);
 
   writeToMotorPct(0);
-  writeToLightsPct(0);
+  writeToLightsPct(100,true);
+  writeToLightsPct(100,false);
 
 }
 void writeToMotorPct(float velocity_pct){
@@ -69,29 +69,53 @@ void updateMotor(String motor_str, float range_max){
     writeToMotorPct(velocity_pct);
   }  
 }
-void writeToLightsPct(float lights_pct){
-    
-    float velocity=lights_pct;
+void writeToLightsPct(float lights_pct_in, bool lights_state_in){    
+    float velocity=lights_pct_in;
     if(velocity > 100) 
       velocity=100;
     else if(velocity < -100)
       velocity=-100;
 
     float speed = (velocity>0)?velocity:-velocity;
-
-    lights_pct = velocity;
+    if(lights_state_in == true){
+      lights_pct = velocity;
+      lights_state = true;
+    }else{
+      speed = 0;
+      lights_state = false;
+    }
     int write_val=(speed * 1023.0)/100.0;
+    Serial.printf("writeToLightsPct: lights_pct= %f - lights_pct\n",lights_pct);
+    Serial.printf("writeToLightsPct: write_val= %f - write_val\n",write_val);
     analogWrite(LED_PIN, write_val);
     digitalWrite(LED_DIR_PIN, (lights_pct>0)?LOW:HIGH);
 }
+
+void updateLightsState(String lights_state_str){
+  if(lights_state_str){
+    String tmp_str=lights_state_str;
+    tmp_str.toLowerCase();
+    bool tf_state=false;
+    if((tmp_str == "on") ||
+    (tmp_str == "1") ||
+    (tmp_str == "true")){
+    tf_state=true;
+  }
+  writeToLightsPct(lights_pct, tf_state);  
+}
+}
+
 void updateLightsPct(String lights_str){
   if(lights_str.length()){
-    Serial.printf("lights= %s\n",lights_str.c_str());
+    Serial.printf("updateLightsPct: lights= %s\n",lights_str.c_str());
 
     float velocity_pct=lights_str.toFloat();
-    writeToLightsPct(velocity_pct);
+    bool vel_state=(velocity_pct == 0)?false:true;
+    Serial.printf("updateLightsPct: lights= %f - velocity_pct\n",velocity_pct);
+    writeToLightsPct(velocity_pct, vel_state);
   }
 }
+
 void updateLights(String lights_str, float range_max){
   if((-0.001 < range_max) && (range_max < 0.001)){
     return;
@@ -101,7 +125,7 @@ void updateLights(String lights_str, float range_max){
 
     float lights_pct=lights_str.toFloat();
     lights_pct = lights_pct*100.0/range_max;
-    writeToLightsPct(lights_pct);
+    writeToLightsPct(lights_pct, true);
   }  
 }
 
@@ -138,9 +162,6 @@ void updateVolume(String volume_str){
     chug->SetGainPCT(volume_pct);
   }
 }
-
-
-
 
 void handleRoot() {
   digitalWrite(LED_PIN, 1);
@@ -189,7 +210,6 @@ String getContentType(String filename) { // convert the file extension to the MI
   return "text/plain";
 }
 
-
 bool handleFileRead(String path) { // send the right file to the client (if it exists)
   Serial.println("handleFileRead: " + path);
   if (path.endsWith("/")) path += "index.html";          // If a folder is requested, send the index file
@@ -207,7 +227,6 @@ bool handleFileRead(String path) { // send the right file to the client (if it e
   Serial.println(String("\tFile Not Found: ") + path);   // If the file doesn't exist, return false
   return false;
 }
-
 
 void handleUpdate(){
   Serial.printf("handleUpdate-start\n");
@@ -245,6 +264,13 @@ void handleUpdate(){
     updateLightsPct(tmp_str);
     Serial.printf("lights = %s\n",tmp_str.c_str());
   }
+
+  tmp_str = server.arg("lights_state");
+  if(tmp_str.length() > 0){
+    updateLightsState(tmp_str);
+    Serial.printf("lights_state = %s\n", tmp_str.c_str());
+  }
+
   //SOUND
   tmp_str = server.arg("sound" );
   if(tmp_str.length() == 0){
@@ -290,19 +316,19 @@ void handleUpdateJSON(){
   handleUpdate();
   // form JSON return
   String ret_string;
-  ret_string  = "[{\n";
+  ret_string  = "{\n";
   ret_string += "\"motor_pct\": \""  + String(motor_pct)  + "\",\n";
   ret_string += "\"lights_pct\": \"" + String(lights_pct) + "\",\n";
   ret_string += "\"volume_pct\": \"" + String(volume_pct) + "\",\n";
 //compatibility with Internet of LEGO Node red - begin
-  ret_string += "\"return\": \"" + String("1") + "\"\n";
-  ret_string += "\"id\": \"" + String("1") + "\"\n";
-  ret_string += "\"name\": \"" + String("Steam Engine") + "\"\n";
-  ret_string += "\"hardware\": \"" + String("esp8266") + "\"\n";
-  ret_string += "\"connected\": " + String("true") + "\n";
 //{"return_value": 1, "id": "1", "name": "Horizon Express", "hardware": "esp8266", "connected": true}
+  ret_string += "\"return\": \""     + String("1")        + "\",\n";
+  ret_string += "\"id\": \""         + String("1")        +  "\",\n";
+  ret_string += "\"name\": \""       + String("Steam Engine") + "\",\n";
+  ret_string += "\"hardware\": \""   + String("esp8266")  + "\",\n";
+  ret_string += "\"connected\": "    + String("true")     + "\n";
 //compatibility with Internet of LEGO Node red - end
-  ret_string += "}]\n";
+  ret_string += "}\n";
   server.send(200, "application/json", ret_string);
   Serial.printf("after set\n");
   Serial.printf("motor_pct = %f\n", motor_pct);
