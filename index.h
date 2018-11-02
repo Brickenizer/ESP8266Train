@@ -2,6 +2,5 @@
 #define _INDEX_PAGE
 
 void handleIndex();
-void handleIndex2();
 
 #endif

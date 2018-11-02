@@ -316,8 +316,12 @@ String createJSONStatus(){
   String ret_string="";
   ret_string  = "{\n";
   ret_string += "\"motor_pct\": \""  + String(motor_pct)  + "\",\n";
+  ret_string += "\"motor_state\": \""  + String(motor_state)  + "\",\n";
   ret_string += "\"lights_pct\": \"" + String(lights_pct) + "\",\n";
+  ret_string += "\"lights_state\": \"" + String(lights_state) + "\",\n";
   ret_string += "\"volume_pct\": \"" + String(volume_pct) + "\",\n";
+  ret_string += "\"volume_state\": \"" + String(volume_state) + "\",\n";
+
 //compatibility with Internet of LEGO Node red - begin
 //{"return_value": 1, "id": "1", "name": "Horizon Express", "hardware": "esp8266", "connected": true}
   ret_string += "\"return\": \""     + String("1")        + "\",\n";

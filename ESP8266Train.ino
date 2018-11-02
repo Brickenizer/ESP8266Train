@@ -70,9 +70,9 @@ void setup()
   
   x=0;
   Period=500;
-  server.on("/", handleIndex2);
-  server.on("/index", handleIndex2);
-  server.on("/index.html", handleIndex2);
+  server.on("/", handleIndex);
+  server.on("/index", handleIndex);
+  server.on("/index.html", handleIndex);
   server.on("/update",handleUpdateJSON);
   server.on("/motor",handleUpdateJSON);
   server.on("/lights",handleUpdateJSON);

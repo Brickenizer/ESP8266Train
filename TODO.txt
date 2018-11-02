@@ -1,0 +1,15 @@
+-Update lights button from JSON stream
+-Consolidate Chug to Sounds
+	     - convert wav, mixer_stub, file to own object with sound file name included
+-See how big bootstrap is
+-Install motor lower / upper limit with test
+-Install RFID MFRC522 with directives
+	 - corner
+	 - speed %
+	 - pause
+	 - special sound
+	 - random sound
+-Clean up sounds for short whistle/long whistle
+-Add chug select by base name
+-Clean up sound naming convention
+-Remove dead code

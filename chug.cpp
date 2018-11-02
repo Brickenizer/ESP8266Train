@@ -79,25 +79,25 @@ void Chug::BeginPlay(const char *wavfilename, bool is_chuff, uint8_t ch_num){
       }
     }    
   }
-       WavDoneMsgSent[ch_num]=false;
-       if ( is_chuff == true ){
-            ChugPlaying=true;
-            AUDIO_DEBUG(Serial.printf(" ch %d pse %d file %10.0ld BeginPlay Chug\n",ch_num, false, file[ch_num]););
-       } else {
-        if (wav[ch_num]->isRunning()) {
-          wav[ch_num]->stop(); 
-          mixer_stub[ch_num]->stop();
-          if(file[ch_num] != NULL){
-            delete file[ch_num];
-            file[ch_num]=NULL;
-          }
-          #ifdef AudioDebug
-          Serial.printf("-Stopped\n");
-          Serial.printf(" ch %d pse %d file %10.0ld BeginPlay SFX\n",ch_num, true, file[ch_num]);
-          #endif
-        }
+  WavDoneMsgSent[ch_num]=false;
+  if ( is_chuff == true ){
+    ChugPlaying=true;
+    AUDIO_DEBUG(Serial.printf(" ch %d pse %d file %10.0ld BeginPlay Chug\n",ch_num, false, file[ch_num]););
+  } else {
+    if (wav[ch_num]->isRunning()) {
+      wav[ch_num]->stop(); 
+      mixer_stub[ch_num]->stop();
+      if(file[ch_num] != NULL){
+        delete file[ch_num];
+        file[ch_num]=NULL;
       }
-        AUDIO_DEBUG(Serial.printf(" ch %d pse %d file %10.0ld BeginPlay Sound %s \n",ch_num, (ch_num==0)?false:true, file[ch_num],wavfilename););
+#ifdef AudioDebug
+      Serial.printf("-Stopped\n");
+      Serial.printf(" ch %d pse %d file %10.0ld BeginPlay SFX\n",ch_num, true, file[ch_num]);
+#endif
+    }
+  }
+  AUDIO_DEBUG(Serial.printf(" ch %d pse %d file %10.0ld BeginPlay Sound %s \n",ch_num, (ch_num==0)?false:true, file[ch_num],wavfilename););
       
   file[ch_num] = new AudioFileSourceSPIFFS(wavfilename);
   mixer_stub[ch_num]->begin();

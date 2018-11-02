@@ -180,8 +180,8 @@
 	var url = "update";
 	var url_params ="lights_state="+lights_state;
 	
-	GetStatus(url,url_params);
-	}
+        GetStatus(url,url_params);
+      }
 
 	function submitVolumeButton(volume_val){
 	var url = "update";
@@ -221,25 +221,21 @@
 	}
 	}
 	var light_pct_max=70;
-      var light_pct = 0;
-      var light_state="on"
-	//var val_elem=document.getElementById("myP2");
-	//val_elem.innerHTML=light_pct;
+        var light_pct = 0;
+        var light_state="on"
 	
 	function toggleLights(x){
 	if (x) {
 	if(light_pct == 0){
-	x.style.backgroundColor = "yellow";
-      light_pct=light_pct_max;
-      light_state="on";
+          x.style.backgroundColor = "yellow";
+          light_pct=light_pct_max;
+          light_state="1";
 	}else{
-	x.style.backgroundColor = "white";
-	light_pct=0;
-      light_state="off";
+	  x.style.backgroundColor = "white";
+	  light_pct=0;
+          light_state="0";
 	}
-      submitLightsState(light_state);
-	//    var val_elem=document.getElementById("myP2");
-	//    val_elem.innerHTML=light_pct;
+        submitLightsState(light_state);
 	}
 	}
     </script>
