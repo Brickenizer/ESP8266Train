@@ -75,9 +75,13 @@
       var x = document.getElementById("DEBUG_DATA");
       x.style.display = "none";
       openCity(event, 'Main');
+      RetrieveStatus();
+      var myVar = setInterval(RetrieveStatus, 1000);
+
+      }
+      function RetrieveStatus(){
       GetStatus('','');
       }
-      
       function myStatus(arr) {
       document.getElementById("motor_slider").value = Math.round(arr.motor_pct);
       document.getElementById('motor_val').innerHTML= Math.round(arr.motor_pct);

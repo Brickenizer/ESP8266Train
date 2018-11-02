@@ -311,11 +311,9 @@ void handleUpdate(){
   
   Serial.printf("handleUpdate-end\n");
 }
-void handleUpdateJSON(){
-  Serial.printf("handleUpdateJSON-start\n");
-  handleUpdate();
-  // form JSON return
-  String ret_string;
+
+String createJSONStatus(){
+  String ret_string="";
   ret_string  = "{\n";
   ret_string += "\"motor_pct\": \""  + String(motor_pct)  + "\",\n";
   ret_string += "\"lights_pct\": \"" + String(lights_pct) + "\",\n";
@@ -326,14 +324,19 @@ void handleUpdateJSON(){
   ret_string += "\"id\": \""         + String("1")        +  "\",\n";
   ret_string += "\"name\": \""       + String("Steam Engine") + "\",\n";
   ret_string += "\"hardware\": \""   + String("esp8266")  + "\",\n";
+  uint32_t time_now=millis();
+  ret_string += "\"millis\": \""   + String(time_now)  + "\",\n";
   ret_string += "\"connected\": "    + String("true")     + "\n";
 //compatibility with Internet of LEGO Node red - end
   ret_string += "}\n";
+  return ret_string;
+}
+void handleUpdateJSON(){
+  Serial.printf("handleUpdateJSON-start\n");
+  handleUpdate();
+  // form JSON return
+  String ret_string = createJSONStatus();
   server.send(200, "application/json", ret_string);
-  Serial.printf("after set\n");
-  Serial.printf("motor_pct = %f\n", motor_pct);
-  Serial.printf("lights_pct = %f\n", lights_pct);
-  Serial.printf("volume_pct = %f\n", volume_pct);
   Serial.printf("JSON string =%s\n",ret_string.c_str());
   Serial.printf("handleUpdateJSON-end\n");
 }
