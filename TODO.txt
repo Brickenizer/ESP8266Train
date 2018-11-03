@@ -1,15 +1,23 @@
+BUGS:
 -Update lights button from JSON stream
--Consolidate Chug to Sounds
+-Clean up sounds for short whistle/long whistle
+-Clean up sound naming convention
+-Remove dead code
+
+
+IDEAS:
+- change buttons for motor/lights to +/-1,2,5,10
+- change pos/neg slider to slider + direction
+- Consolidate Chug to Sounds
 	     - convert wav, mixer_stub, file to own object with sound file name included
--See how big bootstrap is
+-Add chug select by base name
 -Install motor lower / upper limit with test
+
+Farther IDEAS:
+-See how big bootstrap is
 -Install RFID MFRC522 with directives
 	 - corner
 	 - speed %
 	 - pause
 	 - special sound
 	 - random sound
--Clean up sounds for short whistle/long whistle
--Add chug select by base name
--Clean up sound naming convention
--Remove dead code
