@@ -84,9 +84,9 @@ void writeToLightsPct(float lights_pct_in, bool lights_state_in){
       speed = 0;
       lights_state = false;
     }
-    int write_val=(speed * 1023.0)/100.0;
+    int write_val=(int)((speed * 1023.0)/100.0);
     Serial.printf("writeToLightsPct: lights_pct= %f - lights_pct\n",lights_pct);
-    Serial.printf("writeToLightsPct: write_val= %f - write_val\n",write_val);
+    Serial.printf("writeToLightsPct: write_val= %d - write_val\n",write_val);
     analogWrite(LED_PIN, write_val);
     digitalWrite(LED_DIR_PIN, (lights_pct>0)?LOW:HIGH);
 }
@@ -221,7 +221,8 @@ bool handleFileRead(String path) { // send the right file to the client (if it e
     File file = SPIFFS.open(path, "r");                    // Open the file
     size_t sent = server.streamFile(file, contentType);    // Send it to the client
     file.close();                                          // Close the file again
-    Serial.println(String("\tSent file: ") + path);
+    Serial.print(String("\tSent file: ") + path);
+    Serial.printf(" bytes=%d\n",sent);
     return true;
   }
   Serial.println(String("\tFile Not Found: ") + path);   // If the file doesn't exist, return false
