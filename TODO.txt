@@ -1,17 +1,20 @@
 BUGS:
 -Update lights button from JSON stream
+
+TODO:
 -Clean up sounds for short whistle/long whistle
 -Clean up sound naming convention
--Remove dead code
-
+-Refactor support.h/.cpp into appropriate classes
+-Finish removing dead code
 
 IDEAS:
 - change buttons for motor/lights to +/-1,2,5,10
 - change pos/neg slider to slider + direction
 - Consolidate Chug to Sounds
 	     - convert wav, mixer_stub, file to own object with sound file name included
--Add chug select by base name
+-Add chug select by base name instead of specifing 4 files
 -Install motor lower / upper limit with test
+-Time chug with speed sensor
 
 Farther IDEAS:
 -See how big bootstrap is
@@ -21,3 +24,4 @@ Farther IDEAS:
 	 - pause
 	 - special sound
 	 - random sound
+-Port to ESP32/TTGO

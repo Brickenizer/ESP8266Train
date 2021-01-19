@@ -5,7 +5,7 @@
 #include "pin_defines.h"
 
 extern ESP8266WebServer server;
-extern Chug *chug;
+extern Chug chug;
 
 extern float motor_pct;
 extern bool  motor_state;
@@ -31,7 +31,6 @@ void setupMotorShield(){
   writeToMotorPct(0);
   writeToLightsPct(100,true);
   writeToLightsPct(100,false);
-
 }
 void writeToMotorPct(float velocity_pct){
     if(velocity_pct > 100) 
@@ -40,8 +39,8 @@ void writeToMotorPct(float velocity_pct){
       velocity_pct=-100;
 
     float speed = (velocity_pct>0)?velocity_pct:-velocity_pct;
-    chug->SetSpeed((26*speed)/100.0);
-    Serial.printf("SpeedMPH = %f \n", chug->GetSpeedMPH());
+    chug.SetSpeed((26*speed)/100.0);
+    Serial.printf("SpeedMPH = %f \n", chug.GetSpeedMPH());
 
     motor_pct = velocity_pct;
     int write_val=(speed * 1023.0)/100.0;
@@ -138,7 +137,7 @@ void updateSound(String sound_str){
     Serial.println("");
     String tmp_sound="/"+sound_str+".wav";
     if(tmp_sound.length()> 5){
-     chug->BeginSFX(tmp_sound.c_str());
+     chug.BeginSFX(tmp_sound.c_str());
     }
   }
 }
@@ -159,21 +158,18 @@ void updateVolume(String volume_str){
       volume_tmp=0;
     
     volume_pct = volume_tmp;
-    chug->SetGainPCT(volume_pct);
+    chug.SetGainPCT(volume_pct);
   }
 }
 
-void handleRoot() {
-  digitalWrite(LED_PIN, 1);
-  server.send(200, "text/plain", "handleRoot: Hello from esp8266!");
-  digitalWrite(LED_PIN, 0);
-}
 
-void handleInline(){
-  server.send(200, "text/plain", "handleInline: this works as well");
-}
+// handleXxxxx routines are for working with web server.
+// TODO: move handle routines to their own files as needed
 
 
+
+
+// In case requested URI does not exist.
 void handleNotFound(){
   // If the client requests any URI
   // send it if it exists

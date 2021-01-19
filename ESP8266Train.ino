@@ -1,27 +1,26 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 
+// System and external includes
 //Webserver
 #include <ESP8266WebServer.h>
-#include <WebSocketsServer.h>   // https://github.com/Links2004/arduinoWebSockets
+// https://github.com/Links2004/arduinoWebSockets
+#include <WebSocketsServer.h>
 
 // Additions for static pages
-//#include <ESP8266WiFi.h>
 #include <WiFiClient.h>
-//#include <ESP8266WiFiMulti.h>
 #include <ESP8266mDNS.h>
-//#include <ESP8266WebServer.h>
-#include <FS.h>   // Include the SPIFFS library
+// Include the SPIFFS library for sound, graphics and html
+#include <FS.h>   
 
+// local defines
 #include "pin_defines.h"
 #include "chug.h"
 #include "index.h"
 #include "support.h"
 
-uint32_t x, x_low=0,x_high=100;
-uint32_t TimeNow;
 uint32_t Period;
-Chug *chug;
+Chug chug;
 uint32_t lastWhistle;
 
 float motor_pct;
@@ -34,7 +33,7 @@ bool  volume_state;
 uint32_t brake_time=millis()+3000;
 
 const char* ssid     = "NETGEAR41";
-const char* password = "kindflower181";
+const char* password = "enter_wifi_password";
 
 ESP8266WebServer server(80);
 WebSocketsServer webSocket = WebSocketsServer(81);
@@ -47,14 +46,12 @@ void setup()
   WiFi.begin(ssid, password);
   Serial.printf("WiFi started");
   delay(100);
-  chug = new Chug();
-  chug->BeginSFX("/ch1.wav");
+  
+  chug.BeginSFX("/ch1.wav");
   void setupMotorShield();
-  delay(500); // allow time for setups..
+  delay(600); // allow time for setups..
 
-  delay(100);
-
-    // Wait for connection
+  // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
@@ -68,7 +65,6 @@ void setup()
   // Start the SPI Flash Files System
   SPIFFS.begin();
   
-  x=0;
   Period=500;
   server.on("/", handleIndex);
   server.on("/index", handleIndex);
@@ -90,9 +86,9 @@ void setup()
 
 void loop()
 { 
-  TimeNow=millis();
   server.handleClient();
-  if(chug->AudioLoop()){
+  // advance the audio loop
+  if(chug.AudioLoop()){
     //Could put steam or random effect triggered on chug
     // sound effect here.
   }

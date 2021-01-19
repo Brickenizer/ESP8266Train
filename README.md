@@ -4,7 +4,8 @@ Using an Arduino ESP8266 to control a model train.  Web control for basis.
 Setup Notes:
 Boards:
 Set up for working with the ESP8266 by adding the boards to Preferences->Additional Boards Managers URL
-http://arduino.esp8266.com/stable/package_esp8266com_index.json,https://raw.githubusercontent.com/nailbuster/esp8266FTPServer/master/library.json
+http://arduino.esp8266.com/stable/package_esp8266com_index.json,
+https://raw.githubusercontent.com/nailbuster/esp8266FTPServer/master/library.json
 
 Configuration:
 Select NodeMCU 1.0 (ESP-12E Module)
@@ -28,3 +29,4 @@ Arduino.h
 Plug-Ins
 ESP8266 Sketch Data Upload  (see also the tutorial: https://www.instructables.com/id/Using-ESP8266-SPIFFS/)
 https://github.com/esp8266/arduino-esp8266fs-plugin
+

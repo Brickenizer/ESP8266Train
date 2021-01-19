@@ -12,8 +12,6 @@ bool handleFileRead(String path);       // send the right file to the client (if
 
 
 void handleNotFound();
-void handleInline();
-void handleRoot();
 void handleUpdate();
 void handleUpdateJSON();
 
